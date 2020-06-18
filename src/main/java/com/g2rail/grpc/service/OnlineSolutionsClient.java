@@ -96,33 +96,4 @@ public class OnlineSolutionsClient {
             ).build();
         }
     }
-
-    public static void main(String[] args) throws InterruptedException {
-        System.out.println(System.getProperty("user.dir"));
-        Dotenv dotenv = Dotenv.load();
-        System.out.println("load succeed");
-        String host = dotenv.get("HOST", "localhost");
-        int port = Integer.parseInt(dotenv.get("PORT", "10541"));
-        String apiKey = dotenv.get("API_KEY", "key");
-        String apiSecret = dotenv.get("API_SECRET", "secret");
-        System.out.println(host + apiKey + apiSecret);
-
-
-        OnlineSolutionsClient client = new OnlineSolutionsClient(host, port, apiKey, apiSecret);
-        String asyncKey = client
-               .search();
-        if (asyncKey.isEmpty()) {
-            System.err.println("Search Failed");
-            return;
-        }
-
-        List<RailwaySolution> solutions;
-        do {
-            Thread.sleep(2000);
-            OnlineSolutionsResponse response = client.queryAsyncOnlineSolutions(asyncKey);
-            solutions = response.getRailwaySolutionsList();
-        }
-        while(solutions.stream().anyMatch(railwaySolution -> railwaySolution.getLoading()));
-        client.shutdown();
-    }
 }

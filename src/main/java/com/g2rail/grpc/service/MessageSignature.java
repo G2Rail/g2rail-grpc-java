@@ -46,7 +46,7 @@ public class MessageSignature {
 
         fields.forEach(((fieldDescriptor) -> {
             DescriptorProtos.FieldDescriptorProto fieldDesc = fieldDescriptor.toProto();
-            if (simpleKinds.contains(fieldDesc.getType())) {
+            if (simpleKinds.contains(fieldDesc.getType()) && !fieldDescriptor.isRepeated()) {
                 Object value = ((GeneratedMessageV3)message).getField(fieldDescriptor);
                 simpleFields.put(fieldDesc.getName(), value);
             }
