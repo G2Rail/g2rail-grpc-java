@@ -3,6 +3,7 @@ package com.g2rail.grpc.service;
 import com.grpc.g2rail.OnlineSolutionsResponse;
 import com.grpc.g2rail.RailwaySolution;
 import io.github.cdimascio.dotenv.Dotenv;
+import io.grpc.g2rail.OnlineConfirmationResponse;
 import io.grpc.g2rail.OnlineOrderResponse;
 
 import java.util.List;
@@ -45,6 +46,20 @@ public class Main {
         } while (onlineOrder.getLoading());
         System.out.println(onlineOrder);
 
-//        client.shutdown();
+        OnlineConfirmationClient confirmationClient = new OnlineConfirmationClient(host, port, apiKey, apiSecret);
+        String orderId = onlineOrder.getId();
+        asyncKey = confirmationClient.confirm(orderId);
+
+        OnlineConfirmationResponse onlineConfirmation;
+        do {
+            Thread.sleep(2000);
+            System.out.println("Loading "+asyncKey);
+            onlineConfirmation = confirmationClient.queryAsyncOnlineConfirmation(asyncKey);
+        } while (onlineConfirmation.getLoading());
+        System.out.println(onlineConfirmation);
+
+        client.shutdown();
+        orderClient.shutdown();
+        confirmationClient.shutdown();
     }
 }
