@@ -5,6 +5,7 @@ import com.grpc.g2rail.RailwaySolution;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.grpc.g2rail.OnlineConfirmationResponse;
 import io.grpc.g2rail.OnlineOrderResponse;
+import io.grpc.g2rail.TicketsResponse;
 
 import java.util.List;
 
@@ -58,8 +59,13 @@ public class Main {
         } while (onlineConfirmation.getLoading());
         System.out.println(onlineConfirmation);
 
+        OnlineTicketsClient ticketsClient = new OnlineTicketsClient(host, port, apiKey, apiSecret);
+        TicketsResponse tickets = ticketsClient.download(orderId);
+
+        System.out.println(tickets);
         client.shutdown();
         orderClient.shutdown();
         confirmationClient.shutdown();
+        ticketsClient.shutdown();
     }
 }
