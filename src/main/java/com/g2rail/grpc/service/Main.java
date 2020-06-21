@@ -5,6 +5,7 @@ import com.grpc.g2rail.RailwaySolution;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.grpc.g2rail.OnlineConfirmationResponse;
 import io.grpc.g2rail.OnlineOrderResponse;
+import io.grpc.g2rail.SuggestionsResponse;
 import io.grpc.g2rail.TicketsResponse;
 
 import java.util.List;
@@ -19,6 +20,12 @@ public class Main {
         String apiKey = dotenv.get("API_KEY", "key");
         String apiSecret = dotenv.get("API_SECRET", "secret");
         System.out.println(host + apiKey + apiSecret);
+
+        SuggestionsClient suggestionClient = new SuggestionsClient(host, port, apiKey, apiSecret);
+        SuggestionsResponse suggestions = suggestionClient
+                .query("BERLIN");
+
+        System.out.println(suggestions);
 
         OnlineSolutionsClient client = new OnlineSolutionsClient(host, port, apiKey, apiSecret);
         String asyncKey = client
